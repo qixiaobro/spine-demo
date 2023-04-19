@@ -130,7 +130,7 @@ body {
 }
 
 #canvas {
-  width: 10vw;
-  height: 10vw;
+  width: 200px;
+  height: 200px;
 }
 </style>

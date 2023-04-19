@@ -1,11 +1,14 @@
 <script setup>
 import * as spine from '@esotericsoftware/spine-webgl'
-import { onMounted } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 
-const getAssetsUrl = (name)=>{
+const getAssetsUrl = (name) => {
   return new URL(`/src/assets/${name}`, import.meta.url).href;
 }
+
+const animation = ref('walk')
+const animations = ref([])
 
 class App {
 
@@ -43,7 +46,8 @@ class App {
     // Create the animation state 创建动画状态
     let stateData = new spine.AnimationStateData(this.skeletonData);
     this.state = new spine.AnimationState(stateData);
-    this.state.setAnimation(0, "blink", true);
+    this.state.setAnimation(0, "walk", true);
+    animations.value = this.skeletonData.animations.map(item => item.name)
 
     // Create the user interface to selecting skins 创建皮肤选择界面
     this.createUI(canvas);
@@ -130,7 +134,7 @@ class App {
     // 3. 将其居中并缩放到离屏画布并渲染它
     // 4. 从画布中获取渲染的图像并将其存储。
     let images = [];
-    
+
     for (var skin of this.skeletonData.skins) {
       // Skip the empty default skin 
       // 跳过空的默认皮肤
@@ -140,7 +144,7 @@ class App {
       // to the setup pose and calculate the world transforms
       // 设置皮肤，然后更新骨架
       // 到设置姿势并计算世界变换
-      
+
       this.skeleton.setSkin(skin);
       this.skeleton.setToSetupPose();
       this.skeleton.updateWorldTransform();
@@ -178,7 +182,6 @@ class App {
       // Get the image data and convert it to an img element
       // 获取图像数据并将其转换为img元素
       let image = new Image();
-      console.log(canvas.htmlCanvas,canvas.context)
       image.src = canvas.htmlCanvas.toDataURL();
       image.skinName = skin.name;
       image.isSet = false;
@@ -257,18 +260,30 @@ class App {
   }
 }
 
+const instance = ref(null);
 onMounted(() => {
   // Create the Spine canvas which runs the app
+  instance.value = new App()
   new spine.SpineCanvas(document.getElementById("canvas"), {
-    app: new App()
+    app: instance.value
   });
 });
+
+watch(animation, (val) => {
+  if (val && instance.value) {
+    instance.value.state.setAnimation(0, val, true);
+    console.log(instance.value)
+  }
+})
 </script>
 
 <template>
   <div id="container">
     <div id="skins"></div>
     <canvas id="canvas"></canvas>
+    <select v-model="animation" style="height:20px">
+      <option :value="item" v-for="(item, index) in animations" :key="index">{{ item }}</option>
+    </select>
   </div>
 </template>
 
@@ -292,6 +307,6 @@ body {
 }
 
 #canvas {
-  width: calc(100% - 100px);
+  width: calc(100% - 200px);
 }
 </style>
