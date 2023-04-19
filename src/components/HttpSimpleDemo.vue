@@ -10,6 +10,10 @@ const getAssetsUrl = (name) => {
 const animation = ref('')
 const animations = ref([])
 
+let skeletonUrl = "https://test-dzq.oss-cn-shanghai.aliyuncs.com/assets/Skadi_Role.skel";
+let atlasUrl = "https://test-dzq.oss-cn-shanghai.aliyuncs.com/assets/Skadi_Role.atlas";
+let imageUrl = "https://test-dzq.oss-cn-shanghai.aliyuncs.com/assets/Skadi_Role.png";
+
 class App {
 
   constructor() {
@@ -25,8 +29,11 @@ class App {
 
   loadAssets(canvas) {
     canvas.assetManager.AnimationState
-    canvas.assetManager.loadTextureAtlas(getAssetsUrl("Skadi_Role.atlas"));
-    canvas.assetManager.loadBinary(getAssetsUrl("Skadi_Role.skel"));
+    canvas.assetManager.loadBinary(skeletonUrl);
+    canvas.assetManager.loadTextureAtlas(atlasUrl);
+    canvas.assetManager.loadTexture(imageUrl);
+    // canvas.assetManager.loadTextureAtlas(getAssetsUrl("Skadi_Role.atlas"));
+    // canvas.assetManager.loadBinary(getAssetsUrl("Skadi_Role.skel"));
   }
 
   initialize(canvas) {
@@ -34,17 +41,15 @@ class App {
     let assetManager = canvas.assetManager;
 
     // Create the atlas 创建纹理集
-    this.atlas = canvas.assetManager.require(getAssetsUrl("Skadi_Role.atlas"));
-    let atlasLoader = new spine.AtlasAttachmentLoader(this.atlas);
+    let atlasLoader = new spine.AtlasAttachmentLoader(assetManager.require(atlasUrl), assetManager.require(imageUrl));
     console.log(atlasLoader)
     // Create the skeleton 创建骨架
     let skeletonBinary = new spine.SkeletonBinary(atlasLoader);
     console.log(skeletonBinary)
-    this.skeletonData = skeletonBinary.readSkeletonData(assetManager.require(getAssetsUrl("Skadi_Role.skel")));
-    console.log(assetManager.require(getAssetsUrl("Skadi_Role.skel")))
-    console.log(this.skeletonData)
+    this.skeletonData = skeletonBinary.readSkeletonData(assetManager.require(skeletonUrl));
     this.skeleton = new spine.Skeleton(this.skeletonData);
     animations.value = this.skeletonData.animations.map(item => item.name)
+    console.log(animations.value)
 
     // Create the animation state 创建动画状态
     let stateData = new spine.AnimationStateData(this.skeletonData);
