@@ -2,6 +2,13 @@
 import * as spine from '@esotericsoftware/spine-webgl'
 import { onMounted, ref, watch } from 'vue';
 
+const props = defineProps({
+  id: {
+    type: String,
+    default: 'canvas'
+  }
+})
+
 
 const getAssetsUrl = (name) => {
   return new URL(`/src/assets/${name}`, import.meta.url).href;
@@ -93,7 +100,7 @@ const instance = ref(null)
 onMounted(() => {
   // Create the Spine canvas which runs the app
   instance.value = new App()
-  new spine.SpineCanvas(document.getElementById("canvas"), {
+  new spine.SpineCanvas(document.getElementById(props.id), {
     app: instance.value
   });
 });
@@ -107,8 +114,8 @@ watch(animation, (val) => {
 </script>
 
 <template>
-  <div id="container">
-    <canvas id="canvas"></canvas>
+  <div class="container">
+    <canvas class="canvas-wrap" :id="id"></canvas>
     <select v-model="animation">
       <option :value="item" v-for="(item, index) in animations" :key="index">{{ item }}</option>
     </select>
@@ -122,7 +129,7 @@ body {
   padding: 0;
 }
 
-#container {
+.container {
   display: flex;
   width: 80vh;
   height: 80vh;
@@ -130,7 +137,7 @@ body {
   align-items: center;
 }
 
-#canvas {
+.canvas-wrap {
   width: 200px;
   height: 200px;
 }
