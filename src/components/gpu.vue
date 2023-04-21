@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted, ref } from 'vue';
 import SimpleDemo from './SimpleDemo.vue'
 
 defineProps({
@@ -11,13 +12,19 @@ defineProps({
     default: 2
   }
 })
+
+// const count = ref(1)
+// onMounted(() => {
+//   setInterval(() => {
+//     count.value++
+//   }, 3000)
+// })
 </script>
 
 <template>
-<div>
-  <SimpleDemo v-for="i in num" :key="i" :id="`${idPrefix}${i}`"/>
-</div>
+  <div v-for="i in num" :key="i">
+    <SimpleDemo :id="`${idPrefix}${i}`" />
+  </div>
 </template>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

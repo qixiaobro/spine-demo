@@ -4,7 +4,7 @@ import ThemeChangeDemo from './components/ThemeChangeDemo.vue';
 import HttpSimpleDemo from './components/HttpSimpleDemo.vue';
 import gpu from './components/gpu.vue';
 import { ref } from 'vue'
-const active = ref(4)
+const active = ref(1)
 
 </script>
 

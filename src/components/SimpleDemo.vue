@@ -1,6 +1,6 @@
 <script setup>
 import * as spine from '@esotericsoftware/spine-webgl'
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps({
   id: {
@@ -96,13 +96,14 @@ class App {
 }
 
 const instance = ref(null)
-
+const spineInstance = ref(null)
 onMounted(() => {
   // Create the Spine canvas which runs the app
   instance.value = new App()
-  new spine.SpineCanvas(document.getElementById(props.id), {
+  spineInstance.value = new spine.SpineCanvas(document.getElementById(props.id), {
     app: instance.value
   });
+  console.log(spineInstance.value,instance.value)
 });
 
 watch(animation, (val) => {
@@ -111,6 +112,12 @@ watch(animation, (val) => {
     console.log(instance.value)
   }
 })
+
+onUnmounted(() => {
+  // spineInstance.value.dispose();
+});
+
+
 </script>
 
 <template>
